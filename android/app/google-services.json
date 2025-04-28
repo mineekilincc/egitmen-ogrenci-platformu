@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "1045713974628",
+    "project_id": "edu-connect-3b031",
+    "storage_bucket": "edu-connect-3b031.appspot.com"
+
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045713974628:android:0b84912ece7dc3d5b97671",
+        "android_client_info": {
+          "package_name": "com.example.egitmen_ogrenci_app2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAG6gbh8d4QdgR6_7Tp4Vfj_ROrXCeSrA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045713974628:android:8791c7781d1eb33db97671",
+        "android_client_info": {
+          "package_name": "com.firat.egitmenogrenciapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAG6gbh8d4QdgR6_7Tp4Vfj_ROrXCeSrA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
