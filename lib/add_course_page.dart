@@ -11,131 +11,90 @@ class AddCoursePage extends StatefulWidget {
 }
 
 class AddCoursePageState extends State<AddCoursePage> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _timeController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
-
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
+  final TextEditingController _timeController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     if (widget.course != null) {
-      _nameController.text = widget.course!['name'];
-      _descriptionController.text = widget.course!['description'];
-      _timeController.text = widget.course!['time'];
-      _dateController.text = widget.course!['date'];
-    }
-  }
-
-  void _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-        _dateController.text =
-            "${picked.toLocal()}".split(' ')[0]; // Format: yyyy-mm-dd
-      });
-    }
-  }
-
-  void _selectTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime ?? TimeOfDay.now(),
-    );
-    if (picked != null && picked != _selectedTime) {
-      setState(() {
-        _selectedTime = picked;
-        _timeController.text = picked.format(context); // Format: HH:mm
-      });
+      _titleController.text = widget.course!['name'] ?? '';
+      _descriptionController.text = widget.course!['description'] ?? '';
+      _timeController.text = widget.course!['time'] ?? '';
+      _dateController.text = widget.course!['date'] ?? '';
     }
   }
 
   void _saveCourse() {
-    if (_formKey.currentState!.validate()) {
-      final course = {
-        'name': _nameController.text,
-        'description': _descriptionController.text,
-        'time': _timeController.text,
-        'date': _dateController.text,
-      };
+    final course = {
+      'name': _titleController.text,
+      'description': _descriptionController.text,
+      'time': _timeController.text,
+      'date': _dateController.text,
+    };
 
-      widget.onCourseAdded(course);
-      Navigator.pop(context);
-    }
+    widget.onCourseAdded(course);
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.course == null ? "Yeni Ders Ekle" : "Ders Düzenle"),
+        title: Text(widget.course == null ? "Yeni Ders Ekle" : "Dersi Düzenle"),
         backgroundColor: Colors.deepOrange,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
+        padding: const EdgeInsets.all(20.0),
+        child: SingleChildScrollView(
           child: Column(
             children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: "Ders Adı"),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Ders adı boş olamaz!';
-                  }
-                  return null;
-                },
+              TextField(
+                controller: _titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Ders Başlığı',
+                  border: OutlineInputBorder(),
+                ),
               ),
-              TextFormField(
+              const SizedBox(height: 15),
+              TextField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: "Ders Açıklaması"),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Açıklama boş olamaz!';
-                  }
-                  return null;
-                },
+                decoration: const InputDecoration(
+                  labelText: 'Açıklama',
+                  border: OutlineInputBorder(),
+                ),
               ),
-              TextFormField(
+              const SizedBox(height: 15),
+              TextField(
                 controller: _dateController,
-                decoration: InputDecoration(labelText: "Ders Tarihi"),
-                readOnly: true, // Disable manual editing
-                onTap: () => _selectDate(context),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Tarih boş olamaz!';
-                  }
-                  return null;
-                },
+                decoration: const InputDecoration(
+                  labelText: 'Tarih (örn. 2025-05-01)',
+                  border: OutlineInputBorder(),
+                ),
               ),
-              TextFormField(
+              const SizedBox(height: 15),
+              TextField(
                 controller: _timeController,
-                decoration: InputDecoration(labelText: "Ders Saati"),
-                readOnly: true, // Disable manual editing
-                onTap: () => _selectTime(context),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Saat boş olamaz!';
-                  }
-                  return null;
-                },
+                decoration: const InputDecoration(
+                  labelText: 'Saat (örn. 14:00)',
+                  border: OutlineInputBorder(),
+                ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: _saveCourse,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrange,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 50,
+                    vertical: 15,
+                  ),
+                ),
                 child: Text(
-                  widget.course == null ? "Ders Ekle" : "Dersi Güncelle",
+                  widget.course == null ? 'Ders Ekle' : 'Dersi Güncelle',
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
             ],
