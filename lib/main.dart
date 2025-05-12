@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart'; // Logger'ı ekleyin
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -17,17 +18,17 @@ final logger = Logger();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ⭐ Stripe Publishable Key'i tanımla
-  Stripe.publishableKey =
-      "pk_test_51RNZsGDI10r98wIw8aV3mzvG2B4TVCctq1qRzw3Jvx6oLkd1puOEDL7iQQCvnvxV6NRQsqbA1TVMNQ8Qm4U53o6t00zaWBgEtZ"; // kendi key'ini yaz
+  await dotenv.load(); // 🔐 .env dosyasını yükle
+
+  Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? "";
 
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    await Stripe.instance.applySettings(); // opsiyonel
+    await Stripe.instance.applySettings();
   } catch (e) {
-    logger.e("Firebase başlatma hatası", e); // ✅ düzeltilmiş hali
+    logger.e("Firebase başlatma hatası", e);
   }
 
   runApp(const MyApp());
