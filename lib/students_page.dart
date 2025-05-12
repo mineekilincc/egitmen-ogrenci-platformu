@@ -37,7 +37,7 @@ class _StudentsPageState extends State<StudentsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Öğrenciler'),
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: const Color.fromARGB(255, 34, 214, 255),
       ),
       body: ListView.builder(
         itemCount: students.length,

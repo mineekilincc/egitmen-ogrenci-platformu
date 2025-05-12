@@ -12,7 +12,7 @@ class InstructorSettingsPage extends StatelessWidget {
           "Ayarlar",
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color.fromARGB(255, 34, 214, 255),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),

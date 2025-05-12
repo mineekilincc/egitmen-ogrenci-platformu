@@ -3,13 +3,33 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:logger/logger.dart'; // Logger'ı ekleyin
+import 'package:flutter_stripe/flutter_stripe.dart';
+
 import 'create_account.dart';
 import 'student_panel.dart';
 import 'instructor_panel.dart';
+import 'firebase_options.dart';
+
+// Logger örneğini oluşturun
+final logger = Logger();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+
+  // ⭐ Stripe Publishable Key'i tanımla
+  Stripe.publishableKey =
+      "pk_test_51RNZsGDI10r98wIw8aV3mzvG2B4TVCctq1qRzw3Jvx6oLkd1puOEDL7iQQCvnvxV6NRQsqbA1TVMNQ8Qm4U53o6t00zaWBgEtZ"; // kendi key'ini yaz
+
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await Stripe.instance.applySettings(); // opsiyonel
+  } catch (e) {
+    logger.e("Firebase başlatma hatası", e); // ✅ düzeltilmiş hali
+  }
+
   runApp(const MyApp());
 }
 
@@ -34,7 +54,7 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -46,6 +66,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _isLoading = false;
   bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   Future<void> _login() async {
     if (!mounted) return;
@@ -73,21 +100,25 @@ class _LoginScreenState extends State<LoginScreen> {
       if (userDoc.exists) {
         final role = userDoc['role'];
 
+        Widget destination;
         if (role == "student") {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const StudentPanel()),
-          );
+          destination = const StudentPanel();
         } else if (role == "instructor") {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const InstructorPanel()),
-          );
+          destination = const InstructorPanel();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Rol bilgisi bulunamadı!")),
           );
+          setState(() {
+            _isLoading = false;
+          });
+          return;
         }
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => destination),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Kullanıcı bilgisi bulunamadı!")),
@@ -257,8 +288,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 30),
-
-              /// 2 Buton: Giriş yapmadan panel erişimi
               Text(
                 "Hızlı Geçiş:",
                 style: GoogleFonts.poppins(

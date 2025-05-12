@@ -26,7 +26,7 @@ class StudentManagementPage extends StatelessWidget {
           "Öğrenci Yönetim",
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: const Color.fromARGB(255, 34, 214, 255),
         centerTitle: true,
       ),
       body: ListView.builder(

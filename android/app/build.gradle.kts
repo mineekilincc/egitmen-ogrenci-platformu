@@ -1,21 +1,21 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android") // Düzgün id kullanımı
-    id("dev.flutter.flutter-gradle-plugin")
-    id("com.google.gms.google-services") // Firebase için gerekli
+    id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
+    id("dev.flutter.flutter-gradle-plugin") // Flutter için bu ŞART
 }
 
 android {
     namespace = "com.example.egitmen_ogrenci_app2"
-    compileSdk = 35
+    compileSdk = 34
     ndkVersion = "27.0.12077973"
 
     defaultConfig {
         applicationId = "com.example.egitmen_ogrenci_app2"
         minSdk = 23
-        targetSdk = 35
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0.0"
     }
 
     buildTypes {
@@ -32,8 +32,4 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-}
-
-flutter {
-    source = "../.."
 }

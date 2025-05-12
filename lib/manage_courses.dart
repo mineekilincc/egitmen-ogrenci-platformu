@@ -1,100 +1,105 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'add_course_page.dart';
 
-class ManageCourses extends StatefulWidget {
+class ManageCourses extends StatelessWidget {
   const ManageCourses({super.key});
 
   @override
-  State<ManageCourses> createState() => _ManageCoursesState();
-}
-
-class _ManageCoursesState extends State<ManageCourses> {
-  List<Map<String, dynamic>> courses = [];
-
-  // Ders ekleme fonksiyonu
-  void _addCourse(Map<String, dynamic> course) {
-    setState(() {
-      courses.add(course);
-    });
-  }
-
-  // Ders silme fonksiyonu
-  void _deleteCourse(int index) {
-    setState(() {
-      courses.removeAt(index);
-    });
-  }
-
-  // Ders düzenleme fonksiyonu
-  void _editCourse(int index, Map<String, dynamic> updatedCourse) {
-    setState(() {
-      courses[index] = updatedCourse;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dersleri Yönet"),
-        backgroundColor: Colors.deepOrange,
+        title: const Text("Dersleri Yönet"),
+        backgroundColor: const Color.fromARGB(255, 34, 214, 255),
       ),
-      body: ListView.builder(
-        itemCount: courses.length,
-        itemBuilder: (context, index) {
-          final course = courses[index];
-          return ListTile(
-            title: Text(course['name']),
-            subtitle: Text('${course['description']} - ${course['time']}'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Ders düzenleme butonu
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    // Ders düzenleme sayfasına yönlendir
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => AddCoursePage(
-                              onCourseAdded: (updatedCourse) {
-                                _editCourse(index, updatedCourse);
-                                Navigator.pop(context);
-                              },
-                              course:
-                                  course, // Mevcut dersi düzenlemek için gönderiyoruz
-                            ),
-                      ),
+      body:
+          userId == null
+              ? const Center(child: Text("Giriş yapmadınız."))
+              : StreamBuilder<QuerySnapshot>(
+                stream:
+                    FirebaseFirestore.instance
+                        .collection('courses')
+                        .where('instructorId', isEqualTo: userId)
+                        .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Center(
+                      child: Text('❌ Veri alınırken hata oluştu.'),
                     );
-                  },
-                ),
-                // Ders silme butonu
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    // Ders silme işlemi
-                    _deleteCourse(index);
-                  },
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final courses = snapshot.data!.docs;
+
+                  if (courses.isEmpty) {
+                    return const Center(child: Text("Henüz ders eklemediniz."));
+                  }
+
+                  return ListView.builder(
+                    itemCount: courses.length,
+                    itemBuilder: (context, index) {
+                      final course = courses[index];
+                      final data = course.data() as Map<String, dynamic>;
+
+                      return ListTile(
+                        title: Text(data['title'] ?? 'İsimsiz Ders'),
+                        subtitle: Text(
+                          '${data['description']} - ${data['date']} ${data['time']}',
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => AddCoursePage(
+                                          course: data,
+                                          onCourseAdded: (updatedCourse) async {
+                                            await FirebaseFirestore.instance
+                                                .collection('courses')
+                                                .doc(course.id)
+                                                .update(updatedCourse);
+                                          },
+                                        ),
+                                  ),
+                                );
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .collection('courses')
+                                    .doc(course.id)
+                                    .delete();
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Yeni ders ekleme sayfasına yönlendir
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => AddCoursePage(onCourseAdded: _addCourse),
-            ),
+            MaterialPageRoute(builder: (context) => const AddCoursePage()),
           );
         },
         backgroundColor: Colors.deepOrange,
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

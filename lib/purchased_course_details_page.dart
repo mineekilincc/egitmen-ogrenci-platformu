@@ -12,7 +12,7 @@ class PurchasedCourseDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(course.title),
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: const Color.fromARGB(255, 34, 214, 255),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

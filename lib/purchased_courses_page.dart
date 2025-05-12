@@ -29,7 +29,7 @@ class PurchasedCoursesPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Satın Alınan Dersler"),
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: const Color.fromARGB(255, 34, 214, 255),
       ),
       body:
           purchasedCourses.isEmpty

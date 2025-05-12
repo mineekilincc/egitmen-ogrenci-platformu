@@ -1,97 +1,104 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-// Sayfaları import et
 import 'manage_courses.dart';
 import 'students_page.dart';
-//import 'meeting_request_page.dart';
 import 'instructor_settings.dart';
-//import 'calendar_page.dart';
 
 class InstructorPanel extends StatelessWidget {
   const InstructorPanel({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final name = "Eğitmen"; // İstersen shared_preferences ile alabilirsin
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 34, 214, 255),
+        centerTitle: true,
         title: Text(
           "Eğitmen Paneli",
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.deepOrange,
-        centerTitle: true,
       ),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "EĞİTMEN PANELİ",
+              "Merhaba $name, Eğitmen Paneline Hoş Geldiniz 🎓",
               style: GoogleFonts.poppins(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Color.fromRGBO(139, 69, 19, 0.8),
+                color: Colors.brown[700],
               ),
             ),
+            const SizedBox(height: 10),
+            Text(
+              "Aşağıdaki seçenekleri kullanarak işlemlerinizi gerçekleştirebilirsiniz:",
+              style: GoogleFonts.poppins(fontSize: 14),
+            ),
             const SizedBox(height: 30),
-
-            // Panel Butonları
-            _buildPanelButton(
-              context,
-              label: "📚 Dersleri Yönet",
-              color: Colors.blueAccent,
-              onPressed:
-                  () => Navigator.push(
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 15,
+                mainAxisSpacing: 15,
+                children: [
+                  _buildCard(
                     context,
-                    MaterialPageRoute(builder: (context) => ManageCourses()),
+                    title: "📚 Ders Ekle ",
+                    subtitle: "Ders oluşturun.",
+                    color: Colors.blueAccent,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ManageCourses(),
+                        ),
+                      );
+                    },
                   ),
-            ),
-            _buildPanelButton(
-              context,
-              label: "👨‍🎓 Öğrencileri Görüntüle",
-              color: Colors.green,
-              onPressed:
-                  () => Navigator.push(
+                  _buildCard(
                     context,
-                    MaterialPageRoute(builder: (context) => StudentsPage()),
+                    title: "📚 Ders Düzenle ",
+                    subtitle: "Mevcut derslerinizi düzenleyin veya silin.",
+                    color: Colors.green,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const StudentsPage(),
+                        ),
+                      );
+                    },
                   ),
-            ),
-            /*_buildPanelButton(
-              context,
-              label: "📅 Takvim / Ders Saatleri",
-              color: Colors.deepPurple,
-              onPressed:
-                  () => Navigator.push(
+                  _buildCard(
                     context,
-                    MaterialPageRoute(builder: (context) => CalendarPage()),
+                    title: "📅 Takvim",
+                    subtitle: "Ders saatlerinizi düzenleyin.",
+                    color: Colors.deepPurple,
+                    onTap: () {
+                      // Takvim sayfası eklenecekse buraya ekle
+                    },
                   ),
-            ),*/
-            /*_buildPanelButton(
-              context,
-              label: "📥 Görüşme Talepleri",
-              color: Colors.redAccent,
-              onPressed:
-                  () => Navigator.push(
+                  _buildCard(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => MeetingRequestPage(),
-                    ),
+                    title: "⚙️ Ayarlar",
+                    subtitle: "Profil bilgilerinizi güncelleyin.",
+                    color: Colors.orange,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const InstructorSettingsPage(),
+                        ),
+                      );
+                    },
                   ),
-            ),*/
-            _buildPanelButton(
-              context,
-              label: "⚙️ Profil Ayarları",
-              color: Colors.orange,
-              onPressed:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => InstructorSettingsPage(),
-                    ),
-                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -99,32 +106,40 @@ class InstructorPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildPanelButton(
+  Widget _buildCard(
     BuildContext context, {
-    required String label,
+    required String title,
+    required String subtitle,
     required Color color,
-    required VoidCallback onPressed,
+    required VoidCallback onTap,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: SizedBox(
-        width: double.infinity,
-        height: 50,
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: color,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          child: Text(
-            label,
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        elevation: 4,
+        color: color,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                subtitle,
+                style: GoogleFonts.poppins(fontSize: 12, color: Colors.white70),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       ),

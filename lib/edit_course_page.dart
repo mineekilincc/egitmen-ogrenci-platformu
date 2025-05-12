@@ -39,7 +39,7 @@ class EditCoursePageState extends State<EditCoursePage> {
           "Ders Düzenle",
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: const Color.fromARGB(255, 34, 214, 255),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
