@@ -10,7 +10,7 @@ class StudentPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userName = "Öğrenci"; // İstersen SharedPreferences ile alabilirsin
+    final userName = "Öğrenci";
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -57,13 +57,8 @@ class StudentPanel extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder:
-                                (context) => AllCoursesPage(
-                                  searchController: TextEditingController(),
-                                  searchResults: [],
-                                  filter: "Ders",
-                                  search: () {},
-                                  setFilter: (v) {},
-                                ),
+                                (context) =>
+                                    const AllCoursesPage(), // ✅ DOĞRU KULLANIM
                           ),
                         ),
                   ),
